@@ -1,0 +1,60 @@
+[prompts]
+rephrase_problem = """You are tasked with rephrasing problems to ensure a deep understanding before solving them. When presented with a problem, follow these steps:
+
+- Restate the problem in clear and simple terms, breaking down complex language or ideas.
+- Focus on the core elements and conditions of the problem.
+- Ensure that the rephrased version is easy to understand and aligns with the original intent of the problem. Don't express your doubts here, simply rephrase the question.
+- Ask yourself: What is the problem really asking for? What conditions must be met?
+- Reflect on any ambiguities in the problem statement and clarify them in your rephrasing.
+Your goal is to ensure that the problem is fully understood before attempting any solution."""
+revise_problem_statement="""You are tasked with ensuring accurate rephrasing of problems. You are provided with a problem, and a collection of "understanding" about the problem, including a rephrasal of the problem. The rephrasal was made to ensure a deep understanding before solving them. Use this workflow:
+
+- Review the current rephrasal to ensure that it is correct. Pay special attention to the terms as these were ambiguities that have been resolved. 
+- If the current rephrasing remains accurate, simply return that. 
+- If the rephrasing does not fully capture the problem statement, revise it follwing the remaining steps:
+    - Restate the problem in clear and simple terms, breaking down complex language or ideas.
+    - Focus on the core elements and conditions of the problem.
+    - Ensure that the rephrased version is easy to understand and aligns with the original intent of the problem.
+    - Ask yourself: What is the problem really asking for? What conditions must be met?
+    - Reflect on any ambiguities in the problem statement and clarify them in your rephrasing.
+Your goal is to ensure that the problem is fully understood before attempting any solution. Provide the final rephrasal in the rephrasal section."""
+identify_goals = """You are tasked with identifying the goals (each independent goal is considered an item) to guide a problem solver in solving the problem. These goals should clarify what needs to be achieved. When presented with a problem, follow these steps:
+
+- Clearly state the primary objective or outcome that the problem is asking to achieve.
+- Break down any sub-goals or intermediate steps necessary to reach the main goal.
+- Distinguish between what is known (facts, conditions) and what is unknown (what must be solved or determined).
+- Ensure the goals are specific and measurable, and not fundamentally an ambiguity in the question, focusing on what success looks like in the context of the problem.
+- Consider whether there may be multiple possible goals or solutions, and clarify each one if applicable.
+Your objective is to make the goals explicit and clear so that the path toward solving the problem is well-defined.  Your goals must be returned as a list of items in the object."""
+revise_goals = """You are tasked with revising a list of goals (each independent goal is considered an item) to ensure that they are relevant, clear and concise. Pay special attention to the terms as these were ambiguities that have been resolved. Use this workflow:
+
+- Start by identifying the goals that were not effected by ambiguity in the newly defined terms: simply preserve these in your response unless they no longer make sense, otherwise set them aside. 
+- For the ones set aside, edit as necessary to ensure accuracy with regards to all the understanding gathered, especially the terms. 
+- If necessary, create a new goal instead. New goals need to be added, add them following these steps:
+    - Clearly state the primary objective or outcome that the problem is asking to achieve.
+    - Break down any sub-goals or intermediate steps necessary to reach the main goal.
+    - Distinguish between what is known (facts, conditions) and what is unknown (what must be solved or determined).
+    - Ensure the goals are specific and measurable, and not fundamentally an ambiguity in the question, focusing on what success looks like in the context of the problem.
+    - Consider whether there may be multiple possible goals or solutions, and clarify each one if applicable.
+Your objective is to make the goals explicit and clear so that the path toward solving the problem is well-defined.  Your goals must be returned as a list of items in the object."""
+list_information = """Your task is to make a detailed list of all the information provided in the problem (each independent detail is considered an item). Do not list the goals themselves in this step! Follow these steps:
+
+- Identify and list all the given data points (numbers, conditions, facts, relationships) explicitly stated in the problem.
+- Note any constraints or limitations that must be followed (e.g., boundaries, rules, assumptions).
+- Organize this information clearly, categorizing relevant data and constraints separately if needed.
+- Avoid interpreting or solving at this stage; focus purely on collecting all the information provided.
+Ensure that no relevant information is missed. Your objective is to create a thorough inventory of all the given information to form a strong foundation for problem-solving."""
+revise_information = """You are tasked with ensuring the accuracy of the list of inforation about a given problem. The information was made to ensure a deep understanding before solving them. Pay special attention to the terms as these were ambiguities that have been resolved, and of course to the information items themselves. Correct or if more approapriate remove any information that was inaccurate because of a misunderstanding of a term. The list should be saved to the information field in your response."""
+identify_doubts = """Your task is to carefully examine the problem for any terms or concepts that could have multiple meanings or that may not be immediately clear. Follow these steps:
+
+- Identify any terms or concepts in the problem that could lead to confusion due to multiple possible interpretations or lack of clarity. Each should clarify an aspect of the problem that is important for a goal, and the question should not be equivalent to a goal or the answer.
+- List each ambiguous term or concept without attempting to resolve it yet. Focus only on detecting potential issues with understanding the problem.
+- Ensure that each term or concept identified is sufficiently distinct that the user will not sense repetition in the questions or the same underlying ambiguity.
+Do not proceed to explanations or clarifications at this stage—simply highlight the problematic terms or concepts."""
+identify_further_doubts = """Your task is to identify any further doubts or ambiguous terms that may have emerged after the initial clarifications. Pay special attention to the term definitions as these were ambiguities that have been resolved. But only modify the doubts section. Follow these steps:
+
+- Re-examine the problem, along with the newly defined terms, to identify any further terms or concepts that could still cause confusion. Each should clarify an aspect of the problem that is important for a goal, and is not equivalent to any terms defined in term_definitions, a goal, or the answer.
+- Highlight any new terms or concepts that might have multiple interpretations or are not fully understood.
+- List these further ambiguous terms for clarification, but do not resolve them in this step. Ensure that each new term or concept identified is sufficiently distinct that the user will not sense repetition in the questions or the same underlying ambiguity.
+- Ensure that all key terms and concepts are fully understood before proceeding. 
+Do not proceed to explanations or clarifications at this stage—simply highlight the problematic terms or concepts."""
