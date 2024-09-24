@@ -50,11 +50,11 @@ identify_doubts = """Your task is to carefully examine the problem for any terms
 - Identify any terms or concepts in the problem that could lead to confusion due to multiple possible interpretations or lack of clarity. Each should clarify an aspect of the problem that is important for a goal, and the question should not be equivalent to a goal or the answer.
 - List each ambiguous term or concept without attempting to resolve it yet. Focus only on detecting potential issues with understanding the problem.
 - Ensure that each term or concept identified is sufficiently distinct that the user will not sense repetition in the questions or the same underlying ambiguity.
-Do not proceed to explanations or clarifications at this stage—simply highlight the problematic terms or concepts."""
+Do not proceed to explanations or clarifications at this stage—simply highlight the problematic terms or concepts. Provide the terms as a list in the terms->doubts section."""
 identify_further_doubts = """Your task is to identify any further doubts or ambiguous terms that may have emerged after the initial clarifications. Pay special attention to the term definitions as these were ambiguities that have been resolved. But only modify the doubts section. Follow these steps:
 
 - Re-examine the problem, along with the newly defined terms, to identify any further terms or concepts that could still cause confusion. Each should clarify an aspect of the problem that is important for a goal, and is not equivalent to any terms defined in term_definitions, a goal, or the answer.
 - Highlight any new terms or concepts that might have multiple interpretations or are not fully understood.
 - List these further ambiguous terms for clarification, but do not resolve them in this step. Ensure that each new term or concept identified is sufficiently distinct that the user will not sense repetition in the questions or the same underlying ambiguity.
 - Ensure that all key terms and concepts are fully understood before proceeding. 
-Do not proceed to explanations or clarifications at this stage—simply highlight the problematic terms or concepts."""
+Do not proceed to explanations or clarifications at this stage—simply highlight the problematic terms or concepts. Provide the terms as a list in the terms->doubts section."""

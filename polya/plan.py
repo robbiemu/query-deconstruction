@@ -1,11 +1,11 @@
-from typing import Optional, TypedDict, Sequence, Dict, Callable
-from pydantic import BaseModel
-from langchain_core.messages import AnyMessage, AIMessage, HumanMessage, \
-    SystemMessage
+from typing import List
+from langchain_core.messages import AIMessage
 from langchain_core.language_models import BaseChatModel
 import yaml
 
-from lib import Messages
+from lib import PolyaNode
+from models import Plan, State, Strategy
+from prompts import config
 
 """
 // Node 2: Devising a Plan
@@ -21,17 +21,87 @@ Node DevisePlan:
 """
 
 
-class Strategy(TypedDict):
-    strategy: str
-    plan: Optional[str]
-    evaluation: Optional[str]
-    tried: Optional[bool]
+def plan_to_message(plan: Plan) -> AIMessage:
+    content = yaml.dump(plan, sort_keys=False, default_flow_style=False)
+    return AIMessage(content=content, label="context")
 
-class Plan(BaseModel):
-    strategies: Sequence[Strategy]
-    evaluation: str
-    strategy: Strategy
-    messages: Messages
+class PlanPrepartion(PolyaNode):
+    def __init__(self, llm: BaseChatModel) -> None:
+        self.super().__init__(llm=llm)
+        self.llm = llm
 
-class DevicePlan():
-    pass
+    def _ideate_strategies(self, state: State, review: bool) -> List[Strategy]:
+        """Generate multiple potential strategies"""
+        print("\n--- #[internal step] Ideating strategies...\n")
+        response = self._default_step(
+            template="Plan",
+            messages=state["messages"], 
+            context=plan_to_message(state["plan"]) 
+                if review else None, 
+            prompts=[
+                config["plan"]["prompts"]["generate_strategies"], 
+                config["plan"]["prompts"]["revise_generated_strategies"]], 
+            review=review)
+        
+        return response["strategies"]
+
+    def _evaluate_strategies(self, state: State, review: bool) -> List[Strategy]:
+        """Evaluate the feasibility and potential effectiveness of each"""
+        print("\n--- #[internal step] Evaluating strategies...\n")
+        response = self._default_step(
+        template="Plan",
+        messages=state["messages"], 
+        context=plan_to_message(state["plan"]), 
+        prompts=[
+            config["plan"]["prompts"]["evaluate_strategies"], 
+            config["plan"]["prompts"]["revise_strategy_evaluations"]], 
+        review=review)
+
+        return response["strategies"]
+
+    def _select_strategy(self, state: State, review: bool) -> Strategy:
+        """Select the most promising strategy"""
+        print("\n--- #[internal step] Selecting strategy...\n")
+        response = self._default_step(
+        template="Plan",
+        messages=state["messages"], 
+        context=plan_to_message(state["plan"]), 
+        prompts=[
+            config["plan"]["prompts"]["select_strategy"], 
+            config["plan"]["prompts"]["select_new_strategy"]], 
+        review=review)
+
+        return response["selected_strategy"]
+
+    def _plan_for_obstacles(self, state: State, review: bool) -> None:
+        """Plan for potential obstacles"""
+        print("\n--- #[internal step] Planning for obstacles...\n")
+        response = self._default_step(
+        template="Plan",
+        messages=state["messages"], 
+        context=plan_to_message(state["plan"]), 
+        prompts=[
+            config["plan"]["prompts"]["plan_for_obstacles"], 
+            config["plan"]["prompts"]["revise_plan_for_obstacles"]], 
+        review=review)
+
+        return response["plan_for_obstacles"]
+
+    def devise_plan(self, state: State, review: bool) -> State:
+        working_state = state.model_dump()
+        working_state["messages"] = state.messages.copy()
+        if not review:
+            working_state["plan"] = Plan()
+
+        working_state["plan"]["strategies"] = \
+            self._ideate_strategies(working_state, review)
+        working_state["plan"]["strategies"] = \
+            self._evaluate_strategies(working_state, review)
+        working_state["plan"]["selected_strategy"] = \
+            self._select_strategy(working_state, review)
+        working_state["plan"]["plan_for_obstacles"] = \
+            self._plan_for_obstacles(working_state, review)
+            
+        return { 
+            "plan": working_state["plan"] 
+        }
