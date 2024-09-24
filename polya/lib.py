@@ -1,8 +1,8 @@
-from typing import Sequence, TypedDict
-from langchain_core.messages import AnyMessage
+from typing import TypedDict
+from langchain_core.messages import AIMessage
+import yaml
 
-
-type Messages = Sequence[AnyMessage]
+from models import Understanding
 
 
 class MyTypedDict(TypedDict):
@@ -12,3 +12,7 @@ class MyTypedDict(TypedDict):
 def typeddict_from_dict(d: dict) -> type:
     new_type = type('MyTypedDict', (MyTypedDict,), d)
     return new_type
+
+def understanding_to_message(understanding: Understanding) -> AIMessage:
+    content = yaml.dump(understanding, sort_keys=False, default_flow_style=False)
+    return AIMessage(content=content, label="context")

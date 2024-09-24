@@ -1,4 +1,4 @@
-from typing import TypedDict, Sequence, List, Dict, Callable
+from typing import Optional, TypedDict, Sequence, Dict, Callable
 from pydantic import BaseModel
 from langchain_core.messages import AnyMessage, AIMessage, HumanMessage, \
     SystemMessage
@@ -21,7 +21,17 @@ Node DevisePlan:
 """
 
 
+class Strategy(TypedDict):
+    strategy: str
+    plan: Optional[str]
+    evaluation: Optional[str]
+    tried: Optional[bool]
+
 class Plan(BaseModel):
+    strategies: Sequence[Strategy]
+    evaluation: str
+    strategy: Strategy
     messages: Messages
 
 class DevicePlan():
+    pass
