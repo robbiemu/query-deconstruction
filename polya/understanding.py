@@ -106,7 +106,7 @@ Your objective is to create a thorough inventory of all the given information to
 2. List each ambiguous term or concept without attempting to resolve it yet. Focus only on detecting potential issues with understanding the problem.
 3. Ensure that each term or concept identified is sufficiently distinct that the user will not sense repetition in the questions.
 Do not proceed to explanations or clarifications at this stage—simply highlight the problematic terms or concepts."""
-    identify_further_doubts_system_message_content = """Your task is to identify any further doubts or ambiguous terms that may have emerged after the initial clarifications. Pay special attention to the term definitions as these were ambiguities that have been resolved. Follow these steps:
+    identify_further_doubts_system_message_content = """Your task is to identify any further doubts or ambiguous terms that may have emerged after the initial clarifications. Pay special attention to the term definitions as these were ambiguities that have been resolved. But only modify the doubts section. Follow these steps:
 
 1. Re-examine the problem, along with the newly defined terms, to identify any further terms or concepts that could still cause confusion.
 2. Highlight any new terms or concepts that might have multiple interpretations or are not fully understood.
@@ -233,7 +233,6 @@ Do not proceed to explanations or clarifications at this stage—simply highligh
             print("verifying we have no new doubts immediately ...\n", yaml.dump(terms))
             next_terms = self.llm.with_structured_output(Terms).invoke(messages)
             terms["doubts"].extend([term for term in next_terms["doubts"] if term not in terms["term_definitions"]])
-            understanding["terms"] = terms
 
         return terms
 
