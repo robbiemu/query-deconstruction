@@ -6,31 +6,46 @@ from langchain_core.messages import AnyMessage
 type Messages = Sequence[AnyMessage]
 
 # node 1
-class Terms(TypedDict, total=False):
-    doubts: List[str]
-    term_definitions: Dict[str, str]
-
-class Understanding(TypedDict, total=False):
+class Rephrasal(BaseModel):
     rephrasal: str
+
+class Goals(BaseModel):
     goals: List[str]
+
+class information(BaseModel):
     information: List[str]
-    terms: Terms
+
+class Terms(BaseModel):
+    doubts: Optional[List[str]] = None
+    term_definitions: Optional[Dict[str, str]] = None
+
+class Understanding(BaseModel):
+    rephrasal: Optional[str] = None
+    goals: Optional[List[str]] = None
+    information: Optional[List[str]] = None
+    terms: Optional[Terms] = None
 
 # node 2
-class Strategy(TypedDict, total=False):
-    strategy: str
-    evaluation: str
-    tried: bool
+class Strategy(BaseModel):
+    strategy: Optional[str] = None
+    evaluation: Optional[str] = None
+    tried: Optional[bool] = None
 
 class Plan(BaseModel):
-    strategies: Optional[Sequence[Strategy]]
-    selected_strategy: Optional[Strategy]
-    plan_for_obstacles: Optional[str]
-    messages: Messages
+    strategies: Optional[Sequence[Strategy]] = None
+    selected_strategy: Optional[Strategy] = None
+    plan_for_obstacles: Optional[str] = None
+    messages: Optional[Messages] = None
 
 
 def get_type(type:str):
     match type:
+        case "Rephrasal":
+            return Rephrasal
+        case "Goals":
+            return Goals
+        case "Information":
+            return information
         case "Terms":
             return Terms
         case "Understanding":
@@ -44,7 +59,6 @@ def get_type(type:str):
 
 # overall
 class State(BaseModel):
-    problem: Optional[str] = None
     understanding: Optional[Understanding] = None
     plan: Optional[str] = None
     execution: Optional[str] = None
