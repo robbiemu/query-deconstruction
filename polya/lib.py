@@ -1,6 +1,8 @@
 from typing import Tuple, TypedDict
-from langchain_core.messages import AIMessage, AnyMessage, SystemMessage, \
-    HumanMessage
+from langchain_core.messages import AIMessage, AnyMessage, SystemMessage
+from langchain_core.prompts import ChatPromptTemplate, \
+    HumanMessagePromptTemplate, SystemMessagePromptTemplate
+from langchain_core.language_models import BaseChatModel
 
 from models import Messages, get_type
 
@@ -14,32 +16,39 @@ def typeddict_from_dict(d: dict) -> type:
     return new_type
 
 class PolyaNode():
+    def __init__(self, prompt_key: str, llm: BaseChatModel):
+        self.prompt_key = prompt_key
+        self.llm = llm
+
     def _prepare_messages_for_tool_call(
         self, 
-        content: str, 
+        system: str, 
+        prompt: str, 
         conversation: Messages, 
         context: AIMessage = None
     ) -> Messages:
-        sys = SystemMessage(content)
         messages = []
-        messages.append(sys)
         if context:
             messages.append(context)
 
-        etc = [msg for msg in conversation
+        messages += [msg for msg in conversation
                         if not isinstance(msg, SystemMessage)]
-        if isinstance(etc[-1], AIMessage):
-            etc[-1] = HumanMessage(content=messages[-1], source="llm")
+                
+        chat_template = ChatPromptTemplate.from_messages(
+                [SystemMessagePromptTemplate.from_template("{system}")] 
+                    + messages 
+                    + [HumanMessagePromptTemplate.from_template("{prompt}")],
+        )
+        msgs = chat_template.format_messages(system=system, prompt=prompt)
 
-        messages += etc
-
-        return messages
+        return msgs
     
     def _default_step(
             self, 
             template: str,
             messages: Messages, 
             context: AnyMessage, 
+            system: str,
             prompts: Tuple[str, str],
             review: bool, 
     ):
@@ -47,16 +56,19 @@ class PolyaNode():
         if not review:
             if context:
                 messages = self._prepare_messages_for_tool_call(
-                    content = prompts[0], 
+                    system = system,
+                    prompt = prompts[0], 
                     conversation = messages,
                     context = context)
             else:
                 messages = self._prepare_messages_for_tool_call(
-                    content = prompts[0], 
+                    system = system,
+                    prompt = prompts[0], 
                     conversation = messages)                
         else:
             messages = self._prepare_messages_for_tool_call(
-                content = prompts[1], 
+                system = system,
+                prompt = prompts[1], 
                 conversation = messages,
                 context = context)
 

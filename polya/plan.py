@@ -25,22 +25,22 @@ def plan_to_message(plan: Plan) -> AIMessage:
     content = yaml.dump(plan, sort_keys=False, default_flow_style=False)
     return AIMessage(content=content, label="context")
 
-class PlanPrepartion(PolyaNode):
-    def __init__(self, llm: BaseChatModel) -> None:
-        self.super().__init__(llm=llm)
-        self.llm = llm
+class PlanPreparation(PolyaNode):
+    def __init__(self, prompt_key: str, llm: BaseChatModel) -> None:
+        super().__init__(prompt_key, llm)
 
     def _ideate_strategies(self, state: State, review: bool) -> List[Strategy]:
         """Generate multiple potential strategies"""
         print("\n--- #[internal step] Ideating strategies...\n")
         response = self._default_step(
             template="Plan",
+            system=config["plan"][self.prompt_key]["system_prompt"],
             messages=state["messages"], 
             context=plan_to_message(state["plan"]) 
                 if review else None, 
             prompts=[
-                config["plan"]["prompts"]["generate_strategies"], 
-                config["plan"]["prompts"]["revise_generated_strategies"]], 
+                config["plan"][self.prompt_key]["generate_strategies"], 
+                config["plan"][self.prompt_key]["revise_generated_strategies"]], 
             review=review)
         
         return response["strategies"]
@@ -49,13 +49,14 @@ class PlanPrepartion(PolyaNode):
         """Evaluate the feasibility and potential effectiveness of each"""
         print("\n--- #[internal step] Evaluating strategies...\n")
         response = self._default_step(
-        template="Plan",
-        messages=state["messages"], 
-        context=plan_to_message(state["plan"]), 
-        prompts=[
-            config["plan"]["prompts"]["evaluate_strategies"], 
-            config["plan"]["prompts"]["revise_strategy_evaluations"]], 
-        review=review)
+            template="Plan",
+            system=config["plan"][self.prompt_key]["system_prompt"],
+            messages=state["messages"], 
+            context=plan_to_message(state["plan"]), 
+            prompts=[
+                config["plan"][self.prompt_key]["evaluate_strategies"], 
+                config["plan"][self.prompt_key]["revise_strategy_evaluations"]], 
+            review=review)
 
         return response["strategies"]
 
@@ -63,13 +64,14 @@ class PlanPrepartion(PolyaNode):
         """Select the most promising strategy"""
         print("\n--- #[internal step] Selecting strategy...\n")
         response = self._default_step(
-        template="Plan",
-        messages=state["messages"], 
-        context=plan_to_message(state["plan"]), 
-        prompts=[
-            config["plan"]["prompts"]["select_strategy"], 
-            config["plan"]["prompts"]["select_new_strategy"]], 
-        review=review)
+            template="Plan",
+            system=config["plan"][self.prompt_key]["system_prompt"],
+            messages=state["messages"], 
+            context=plan_to_message(state["plan"]), 
+            prompts=[
+                config["plan"][self.prompt_key]["select_strategy"], 
+                config["plan"][self.prompt_key]["select_new_strategy"]], 
+            review=review)
 
         return response["selected_strategy"]
 
@@ -77,13 +79,14 @@ class PlanPrepartion(PolyaNode):
         """Plan for potential obstacles"""
         print("\n--- #[internal step] Planning for obstacles...\n")
         response = self._default_step(
-        template="Plan",
-        messages=state["messages"], 
-        context=plan_to_message(state["plan"]), 
-        prompts=[
-            config["plan"]["prompts"]["plan_for_obstacles"], 
-            config["plan"]["prompts"]["revise_plan_for_obstacles"]], 
-        review=review)
+            system=config["plan"][self.prompt_key]["system_prompt"],
+            template="Plan",
+            messages=state["messages"], 
+            context=plan_to_message(state["plan"]), 
+            prompts=[
+                config["plan"][self.prompt_key]["plan_for_obstacles"], 
+                config["plan"][self.prompt_key]["revise_plan_for_obstacles"]], 
+            review=review)
 
         return response["plan_for_obstacles"]
 
