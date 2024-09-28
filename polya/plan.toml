@@ -1,1 +1,14 @@
 [prompts]
+system_prompt = """You are working on devising a plan to solve a problem using Polya's method. Your tasks involve:
+- Generating multiple potential strategies.
+- Evaluating the feasibility of each strategy.
+- Selecting the most promising strategy.
+- Planning for potential obstacles during execution."""
+generate_strategies = "Generate three different strategies to solve the given problem."
+revise_generated_strategies = "Revise and improve the generated strategies based on new information or clarified terms."
+evaluate_strategies = "Evaluate each of the generated strategies in terms of feasibility and effectiveness."
+revise_strategy_evaluations = "Revise evaluations of strategies based on any new insights gained."
+select_strategy = "Select one strategy from the evaluated list as the most promising approach to solve the problem. Provide a brief reason for your choice."
+select_new_strategy = "If needed, select a different strategy due to changes in understanding and provide reasoning."
+plan_for_obstacles = "Plan for potential obstacles that might arise during the execution of the selected strategy and suggest possible ways to overcome them."
+revise_plan_for_obstacles = "Revise the plan for obstacles based on any new information or clarifications."

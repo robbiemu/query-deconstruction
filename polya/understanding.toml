@@ -1,4 +1,10 @@
 [prompts]
+system_prompt = """You are working on the understanding step of Polya's how-to-solve-it method. Your task is to ensure that you deeply understand the problem at hand. The steps involved in this are:
+    - rephrasal: Rephrase the problem in own words.
+    - goals: Identify the goal and what is being asked.
+    - information: List all knowns, unknowns, and constraints.
+    - terms: Define any ambiguous terms (raising doubts and defining ambiguous terms)
+You will be given a problem and a particular task in constructing this understanding."""
 rephrase_problem = """You are tasked with rephrasing problems to ensure a deep understanding before solving them. When presented with a problem, follow these steps:
 
 - Restate the problem in clear and simple terms, breaking down complex language or ideas.
@@ -45,16 +51,34 @@ list_information = """Your task is to make a detailed list of all the informatio
 - Avoid interpreting or solving at this stage; focus purely on collecting all the information provided.
 Ensure that no relevant information is missed. Your objective is to create a thorough inventory of all the given information to form a strong foundation for problem-solving."""
 revise_information = """You are tasked with ensuring the accuracy of the list of inforation about a given problem. The information was made to ensure a deep understanding before solving them. Pay special attention to the terms as these were ambiguities that have been resolved, and of course to the information items themselves. Correct or if more approapriate remove any information that was inaccurate because of a misunderstanding of a term. The list should be saved to the information field in your response."""
-identify_doubts = """Your task is to carefully examine the problem for any terms or concepts that could have multiple meanings or that may not be immediately clear. Follow these steps:
+identify_doubts = """Your task is to carefully examine the problem for any terms or concepts that could have multiple meanings or that may not be immediately clear. Be sure to only modify the doubts section! Follow these steps:
 
 - Identify any terms or concepts in the problem that could lead to confusion due to multiple possible interpretations or lack of clarity. Each should clarify an aspect of the problem that is important for a goal, and the question should not be equivalent to a goal or the answer.
 - List each ambiguous term or concept without attempting to resolve it yet. Focus only on detecting potential issues with understanding the problem.
-- Ensure that each term or concept identified is sufficiently distinct that the user will not sense repetition in the questions or the same underlying ambiguity.
-Do not proceed to explanations or clarifications at this stage—simply highlight the problematic terms or concepts."""
-identify_further_doubts = """Your task is to identify any further doubts or ambiguous terms that may have emerged after the initial clarifications. Pay special attention to the term definitions as these were ambiguities that have been resolved. But only modify the doubts section. Follow these steps:
+- Ensure that each term or concept identified is sufficiently distinct that the user will not sense repetition in the questions or the same underlying ambiguity. Likewise make sure that you dsont indicate multiple doubts that are disambiguating the same term. Even broad similarity of some doubts is enough to merit reduction to only one doubt.
+Do not proceed to explanations or clarifications at this stage—simply highlight the problematic terms or concepts. Provide the terms as a list in the terms->doubts section."""
+identify_further_doubts = """Your task is to identify any further doubts or ambiguous terms that may have emerged after the initial clarifications. Pay special attention to the term definitions as these were ambiguities that have been resolved. However, only modify the doubts section. Follow these steps:
 
 - Re-examine the problem, along with the newly defined terms, to identify any further terms or concepts that could still cause confusion. Each should clarify an aspect of the problem that is important for a goal, and is not equivalent to any terms defined in term_definitions, a goal, or the answer.
 - Highlight any new terms or concepts that might have multiple interpretations or are not fully understood.
 - List these further ambiguous terms for clarification, but do not resolve them in this step. Ensure that each new term or concept identified is sufficiently distinct that the user will not sense repetition in the questions or the same underlying ambiguity.
-- Ensure that all key terms and concepts are fully understood before proceeding. 
-Do not proceed to explanations or clarifications at this stage—simply highlight the problematic terms or concepts."""
+- Ensure that all key terms and concepts are fully understood before proceeding. Ensure that each term or concept identified is sufficiently distinct that the user will not sense repetition in the questions or the same underlying ambiguity. Likewise make sure that you don't indicate multiple doubts that are disambiguating the same term, or addressing details that are made clear in the term definitions. Even broad similarity of some doubts is enough to merit reduction to only one doubt.
+Do not proceed to explanations or clarifications at this stage—simply highlight the problematic terms or concepts. Provide the terms as a list in the terms->doubts section."""
+
+[simple_prompts]
+system_prompt = """You are working on the understanding step of Polya's how-to-solve-it method. Your task is to ensure that you deeply understand the problem at hand. The steps involved in this are:
+    - rephrasal: Rephrase the problem in own words.
+    - goals: Identify the goal and what is being asked.
+    - information: List all knowns, unknowns, and constraints.
+    - terms: Define any ambiguous terms (raising doubts and defining ambiguous terms)
+The details you add to the understanding should be accurate, concise, not overlapping and non-repetitive. You will be given a problem, possibly a description of the current understanding, and a particular task in the construction of this understanding.
+
+BE SURE TO ESCAPE ANY CHARACTERS AS REQUIRED TO ENSURE VALID JSON."""
+rephrase_problem = "Rephrase the problem to ensure a deep understanding. Be clear, concise, and use simple terms. Work to resolve ambiguities. The problem will be solved later looking at both the original and this rephrasing. Provide the final rephrasal in the rephrasal property."
+revise_problem_statement = """Ensure there was an accurate rephrasing of the problem. You are provided with a problem, and a collection of "understanding" about the problem, including a rephrasal of the problem. The rephrasal was made to ensure a deep understanding before solving them. Be clear, concise, and use simple terms. Work to resolve ambiguities. The problem will be solved later looking at both the original and this rephrasing. Provide the final rephrasal in the rephrasal property."""
+identify_goals = "Identify the goals to guide a problem solver in solving the problem. These goals should clarify what needs to be achieved. The problem will be solved later looking at both the original problem statement and these goals. Provide the goals you ideentify in the goals property."
+revise_goals = "Revise the list of goals to ensure that they are relevant, clear and concise. Pay special attention to the terms as these were ambiguities that have been resolved. Rewrite the goals and provide them in the goals property."
+list_information = """Make a detailed list of all the information provided in the problem. Do not list the goals themselves in this step! Identify and list all the given data points. Note any constraints or limitations that must be followed. Ensure that no relevant information is missed. Each piece of information should be a string. Provide the information you identify in the information property."""
+revise_information = "Ensure the accuracy of the list of inforation about the problem. The information was made to ensure a deep understanding before solving them. Pay special attention to the terms as these were ambiguities that have been resolved, and of course to the information items themselves. Correct or if more approapriate remove any information that was inaccurate because of a misunderstanding of a term.  Each piece of information should be in paragrpah form. Rewrite the information and provide it all in the information property."
+identify_doubts = "Carefully examine the problem for any terms or concepts that could have multiple meanings or that may not be immediately clear. Ensure that each term or concept identified is sufficiently distinct that the user will not sense repetition in the questions, and that no doubts address the same underlying ambiguity. Even broad similarity of some doubts is enough to merit their reduction to only one doubt. Provide the terms in the doubts property."
+identify_further_doubts = "Carefully examine the problem for any terms or concepts that could have multiple meanings or may require further clarification, but ensure these new doubts do not overlap with those already addressed in term_definitions. Only modify the doubts subsection of the terms! Each doubt should present a unique aspect of ambiguity or complexity within the given context. Avoid rephrasing existing doubts and focus on uncovering new areas of potential confusion or misunderstanding. Provide the terms in the terms->doubts property, and leave terms->term_definitions empty."
