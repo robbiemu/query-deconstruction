@@ -1,0 +1,46 @@
+[prompts]
+system_prompt = """You are working on executing a plan to solve a problem using Polya's method. Your tasks involve:
+- Determine the step-by-step implementation of the strategy.
+- Implement the steps.
+- Monitor progress and verify each step.
+- Adjust the plan as needed when encountering obstacles.
+
+Use the full context of the conversation in these tasks. Use the central theme and the purpose listed in the information to determine how strictly logical vs how exploratory or creative that work towards the solution should be.
+"""
+convert_plan_to_steps = """Break down the strategy below into steps for a solver to complete in order to solve the problem. Be creative, not pedantic. Each step should be a clear, concise sentence or short paragraph, inferring a new fact, achieving a goal, or resolving a doubt. 
+
+Ensure the steps follow a logical order, referring to previous steps when useful. Ensure that the result of taking a step is not equivalent to the phrasing of the step: for example, don't include a step "eliminate possibilities A, B and C, ... [for some reason]." because the the action taken in that step will just be equivalent to the step itself. In such situations, the steps should be made more abstract to avoid this issue.
+
+Ensure that the actions taken in each step are justified, for example do not eliminate possibilities unless the reason for their exclusion has been established in a previous step.
+
+Omit steps that ask the solver to do work towards knowledge that is readily apparent. Include only on steps that should lead toward a solution — do not consider steps that draw conclusions, nor consider negative outcomes or what to do if a step fails. 
+
+DO NOT YET WORK TO SOLVE THE PROBLEM!
+
+Strategy
+{strategy}"""
+do_step = """Execute the current step (given below). Note the list of steps already provided, and be sure to only do the work for this step. Pay attention to doubts that we might use this step to resolve. Note also the plan for obstacles. 
+
+Be meticulous, and ensure your claims are unequivocal. consider reasons for and against any claim, and to justify any claimed progress. Work to contribute in this step to an intermediate understanding, achieving a goal, or resolving a doubt. Avoid unnecessary flourishes or summarizations, instead answer as if your response will be input for you into a log of the work for machine parsing. Provide the result of this step in paragraph form in the result property.
+
+Step
+{step}"""
+verify_step = """Verify the result of the executed step (these details are given below). Determine if the step resolves the amiguity it was designed to resolve. Determine whether it reached a definite conclusion, was completed correctly. For example, do not consider it verified if the result did not improve the ambiguity that motivated the step taken. Note the list of steps already provided, and be sure that no other step's work was also done. 
+
+Provide the result as a True or False (boolean) in the is_verified property.
+
+Step
+{step}"""
+summarize_results = "Compose a summuary of the steps taken to solve the problem and results.\n"
+adjust_plan = """An obstacle was encountered during execution. Taking into account the plan for obstacles, and the issue encountered in following the steps, determine if the if the plan for obstacles has a remedy for the issue encountered. 
+
+Be sure that the remedy HAS NOT PREVIOUSLY BEEN APPLIED to the same plan (compair all the previous strategies' recommendation_from_plan_for_obstacles that have the same original strategy as this one). If these conditions are met, adjust the strategy (given below) following the specific remedy suggested in the plan for obstacles. Don't completely change th focus of the strategy, or modify this strategy into basically the same thing as another stategy that was mentioned earlier. 
+
+Provide an indication of whether an adjustment was possible, the adjusted_strategy, the original strategy, a summary detailing the progress before the obstacle was reached, and the remedy chosen from the plan for obstacles.
+
+Strategy
+{strategy}"""
+
+[execution-failed-messages]
+recursion = "Failed to execute plan within recursion limit.\nConsider changing the strategy."
+impasse = "Failed to execute plan after multiple adjustments\nConsider changing the strategy.\n\nPlan Review:\n\n"
