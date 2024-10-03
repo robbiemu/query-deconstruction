@@ -1,5 +1,6 @@
 from typing import Dict, List, Optional, Sequence, TypedDict
 from pydantic import BaseModel
+from collections import OrderedDict
 from langchain_core.messages import AnyMessage
 
 
@@ -30,14 +31,42 @@ class Understanding(TypedDict, total=False):
 
 # node 2
 class Strategy(TypedDict, total=False):
-    strategy: str
+    description: str
     evaluation: str
-    tried: bool
+    outcome: str
 
 class Plan(TypedDict, total=False):
     strategies: Sequence[Strategy]
     selected_strategy: Strategy
     plan_for_obstacles: str
+
+# node 3   
+class AdjustedStrategy(TypedDict, total=False):
+    is_adjusted: bool
+    recommendation_from_plan_for_obstacles: str
+    previous_progress: str
+    original: str
+    result: str
+
+class ExecutionSummary(TypedDict, total=False):
+    summary: str
+
+class StepAction(TypedDict, total=False):
+    action: str
+
+class Step(TypedDict, total=False):
+    action: str
+    result: str
+    is_verified: bool
+
+class StrategySteps(TypedDict, total=False):
+    steps: Sequence[str]
+
+class Execution(TypedDict, total=False):
+    steps: Sequence[Step]
+    should_change_strategy: bool
+    previous_adjustments: Sequence[AdjustedStrategy]
+    result: str
 
 def get_type(type:str):
     match type:
@@ -57,6 +86,18 @@ def get_type(type:str):
             return Strategy
         case "Plan":
             return Plan
+        case "AdjustedStrategy":
+            return AdjustedStrategy
+        case "ExecutionSummary":
+            return ExecutionSummary
+        case "StrategySteps":
+            return StrategySteps
+        case "Step":
+            return Step
+        case "StepAction":
+            return StepAction
+        case "Execution":
+            return Execution
         case _:
             raise ValueError("Invalid type")
 
@@ -64,7 +105,7 @@ def get_type(type:str):
 class State(BaseModel):
     problem: Optional[str] = None
     understanding: Optional[Understanding] = None
-    plan: Optional[str] = None
-    execution: Optional[str] = None
+    plan: Optional[Plan] = None
+    execution: Optional[Execution] = None
     reflection: Optional[str] = None
     messages: Messages
