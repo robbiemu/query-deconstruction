@@ -68,8 +68,10 @@ class PolyaNode():
 
         if template:
             __type__ = get_type(template)
-            response = self.llm.with_structured_output(__type__)\
+            response = self.llm.with_structured_output(__type__, include_raw=True)\
                 .invoke(conversation)
+            print(response)
+            response = response["parsed"]
         else:
             response = self.llm.invoke(conversation)
         return response

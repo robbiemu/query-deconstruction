@@ -10,3 +10,6 @@ with open("devise_plan.toml", "rb") as f:
 
 with open("carry_out_plan.toml", "rb") as f:
     config["carry_out_plan"] = tomllib.load(f)
+
+with open("reflection.toml", "rb") as f:
+    config["reflection"] = tomllib.load(f)

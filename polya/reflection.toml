@@ -1,0 +1,28 @@
+[prompts]
+system_prompt = """You are reflecting on the solution to a problem using Polya's method. Your tasks involve:
+- Verifying that the solution fully addresses the problem.
+- Analyzing the effectiveness of the strategy and execution.
+- Determining reasons for success or failure.
+- Considering how the approach can be applied elsewhere if successful.
+
+Use the full context of the conversation in these tasks. Use the central theme and the purpose listed in the information to determine the depth and focus of your reflection.
+
+BE SURE TO ESCAPE ANY CHARACTERS AS REQUIRED TO ENSURE VALID JSON."""
+analyze_effectiveness = """Analyze the effectiveness of the executed strategy and the solution attempt. Address the following points:
+- Does the solution fully address all aspects of the problem?
+- Was the strategy appropriate for the problem?
+- Were there any obstacles encountered during execution, and how were they handled?
+- What were the strengths and weaknesses of the approach?
+
+Provide this analysis in the form of a paragraph in the `analysis` property."""
+summarize_work = """Summarize the work done on the problem. If the solution was successful, include:
+- A brief overview of the strategy used.
+- Key steps and insights that led to the solution.
+- How the approach could be applied to similar problems in the future.
+
+If the solution was unsuccessful, include:
+- A brief overview of the strategies attempted.
+- Obstacles encountered and reasons why the strategies did not lead to a solution.
+- Potential alternative approaches or next steps.
+
+Provide your summary in the `summary_of_work` property."""

@@ -81,7 +81,7 @@ identify_goals = "Identify the goals to guide a problem solver in solving the pr
 revise_goals = "Revise the list of goals to ensure that they are relevant, clear and concise. Pay special attention to the terms as these were ambiguities that have been resolved. Rewrite the goals and provide them in the goals property."
 list_information = """Make a detailed list of all the information provided in the problem. 
 
-Include at least two other important points.
+Include at least three other important points.
 - Address the central theme or argument
 - Reveal the author's purpose or perspective
 - Indicate if the problem appears to be more one of reducing an excess of possibilities (deductive), or uncovering new ones (inductive), or a challenging and redefining existing frameworks and assumptions (transformative reasoning) is a likely first approach.
