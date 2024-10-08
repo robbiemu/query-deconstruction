@@ -1,6 +1,5 @@
 from typing import Dict, List, Optional, Sequence, TypedDict
 from pydantic import BaseModel
-from collections import OrderedDict
 from langchain_core.messages import AnyMessage
 
 
@@ -46,13 +45,16 @@ class AdjustedStrategy(TypedDict, total=False):
     recommendation_from_plan_for_obstacles: str
     previous_progress: str
     original: str
-    result: str
+    description: str
 
 class ExecutionSummary(TypedDict, total=False):
     summary: str
 
 class StepAction(TypedDict, total=False):
     action: str
+
+class StepResult(TypedDict, total=False):
+    result: str
 
 class Step(TypedDict, total=False):
     action: str
@@ -67,6 +69,18 @@ class Execution(TypedDict, total=False):
     should_change_strategy: bool
     previous_adjustments: Sequence[AdjustedStrategy]
     result: str
+
+# node 4
+class Summary(TypedDict, total=False):
+    summary_of_work: str
+
+class Analysis(TypedDict, total=False):
+    analysis: str
+
+class Reflections(TypedDict, total=False):
+    select_strategy: bool
+    summary_of_work: str
+    solution: str
 
 def get_type(type:str):
     match type:
@@ -96,8 +110,16 @@ def get_type(type:str):
             return Step
         case "StepAction":
             return StepAction
+        case "StepResult":
+            return StepResult
         case "Execution":
             return Execution
+        case "Summary":
+            return Summary
+        case "Analysis":
+            return Analysis
+        case "Reflection":
+            return Reflections
         case _:
             raise ValueError("Invalid type")
 

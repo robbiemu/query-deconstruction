@@ -6,7 +6,8 @@ system_prompt = """You are working on executing a plan to solve a problem using 
 - Adjust the plan as needed when encountering obstacles.
 
 Use the full context of the conversation in these tasks. Use the central theme and the purpose listed in the information to determine how strictly logical vs how exploratory or creative that work towards the solution should be.
-"""
+
+BE SURE TO ESCAPE ANY CHARACTERS AS REQUIRED TO ENSURE VALID JSON."""
 convert_plan_to_steps = """Break down the strategy below into steps for a solver to complete in order to solve the problem. Be creative, not pedantic. Each step should be a clear, concise sentence or short paragraph, inferring a new fact, achieving a goal, or resolving a doubt. 
 
 Ensure the steps follow a logical order, referring to previous steps when useful. Ensure that the result of taking a step is not equivalent to the phrasing of the step: for example, don't include a step "eliminate possibilities A, B and C, ... [for some reason]." because the the action taken in that step will just be equivalent to the step itself. In such situations, the steps should be made more abstract to avoid this issue.
@@ -36,7 +37,14 @@ adjust_plan = """An obstacle was encountered during execution. Taking into accou
 
 Be sure that the remedy HAS NOT PREVIOUSLY BEEN APPLIED to the same plan (compair all the previous strategies' recommendation_from_plan_for_obstacles that have the same original strategy as this one). If these conditions are met, adjust the strategy (given below) following the specific remedy suggested in the plan for obstacles. Don't completely change th focus of the strategy, or modify this strategy into basically the same thing as another stategy that was mentioned earlier. 
 
-Provide an indication of whether an adjustment was possible, the adjusted_strategy, the original strategy, a summary detailing the progress before the obstacle was reached, and the remedy chosen from the plan for obstacles.
+Provide these details in your response:
+
+AdjustedStrategy:
+    is_adjusted: an indication of whether an adjustment was possible
+    recommendation_from_plan_for_obstacles: the remedy chosen from the plan for obstacles
+    previous_progress: a summary detailing the progress before the obstacle was reached
+    original: the original strategy
+    description: the adjusted_strategy
 
 Strategy
 {strategy}"""

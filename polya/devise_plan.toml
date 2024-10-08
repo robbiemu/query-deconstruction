@@ -6,7 +6,8 @@ system_prompt = """You are working on devising a plan to solve a problem using P
 - Planning for potential obstacles during execution.
 
 Use the full context of the conversation in these tasks. Use the central theme and the purpose listed in the information to determine how strictly logical vs how exploratory or creative that work towards the solution should be.
-"""
+
+BE SURE TO ESCAPE ANY CHARACTERS AS REQUIRED TO ENSURE VALID JSON."""
 generate_strategies = """Generate multiple potential strategies to solve the given problem. Note especially the doubts that may be resolved. Create as many strategies as you can, but each should have meaningful difference in terms of the logic or ideas explored to complete them. 
 
 These strategies should not prescribe specific determinations. Any logical deduction used in the step must be sound: don't suggest strategies that would only be good in their assumptions were valid without including that the assumptions must be demonstrated. Yet, overall they should be as varied and creative as one would expect based on the characterizations such as theme and purpose listed in the information provided.
@@ -16,7 +17,7 @@ revise_generated_strategies = "Revise and improve the generated strategies based
 evaluate_strategies = "Evaluate each of the generated strategies in terms of feasibility (how easily a solver would be to be able to complete this strategy) and effectiveness (how promising does the strategy seem/how many degress of freedom there are in finding a solution). Provide the feasibility and effectiveness review in the form of a sentence or paragraph in the evaluation property."
 revise_strategy_evaluations = "Revise evaluations of strategies based on any new insights gained."
 select_strategy = "Select one strategy from the evaluated list as the most promising approach to solve the problem. Provide a brief reason for your choice."
-select_new_strategy = "Select a different strategy due to changes in understanding. Provide a brief reason for your choice."
+select_new_strategy = "Select an untried strategy due to changes in understanding. Provide a brief reason for your choice."
 plan_for_obstacles = """Plan for potential obstacles that might arise during the execution of the selected strategy and suggest possible ways to overcome them. The plan for obstacles should only instruct how to work with the data, not what to do with results. 
 
 Focus on modifying the strategy in a way that leads to a definite solution. For example, do indicate what to do to avoid division by zero if the problem is finding a mean of a dynamic set, but do not indicate what to do if there is insufficient data to determine the outcome of a logic question. 

@@ -2,6 +2,7 @@ from typing import List
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage
 import math
+import json
 import yaml
 
 from lib import PolyaNode
@@ -55,12 +56,13 @@ class CarryOutPlan(PolyaNode):
         instruction = str.format(
             config["carry_out_plan"][self.prompt_key]["do_step"], step=step)
         response = self._default_step(
+            template='StepResult',
             system=config["carry_out_plan"][self.prompt_key]["system_prompt"],
             messages=state["messages"], 
             context=execution_to_message(state["execution"]), 
             prompts=[instruction, None])
         
-        return response.content
+        return response["result"]
     
     def _verify_step(self, step: str, state: State) -> bool:
         """Monitor progress and verify each step."""
@@ -145,19 +147,19 @@ class CarryOutPlan(PolyaNode):
                     if adjustment_counter > adjustment_limit:
                         # Exceeded adjustment limit, cannot adjust plan further
                         execution["result"] = config\
-                            ["execution"]["execution-failed-messages"]["impasse"]  
-                        + f"{plan}"
+                            ["carry_out_plan"]["execution-failed-messages"]\
+                                ["impasse"] + f"{json.dumps(plan)}"
                         execution["should_change_strategy"] = True
-                        return { "execution": execution }
+                        return { "execution": execution, "plan": plan }
                     
                     new_strategy = self._adjust_plan(working_state)
                     if new_strategy["is_adjusted"]:
                         adj = execution["previous_adjustments"] \
                             if "previous_adjustments" in execution else []
                         execution["previous_adjustments"] = adj + [new_strategy]
-                        
-                        plan["selected_strategy"]["description"] = \
-                            new_strategy["result"]
+
+                        plan["selected_strategy"] = new_strategy
+
                         should_restart = True
                         execution["steps"] = []
                     break  # Break out of the for loop to restart the while loop
@@ -166,15 +168,14 @@ class CarryOutPlan(PolyaNode):
                 continue  # Restart the while loop with the adjusted plan
 
             # If all steps completed successfully
-            execution["result"] = self._summary_results(working_state)
-            execution["should_change_strategy"] = False
+            execution["result"], execution["should_change_strategy"] = self._summary_results(working_state)
             break  # Exit the while loop
 
-        if recursion_limit <= 0:
+        if execution["should_change_strategy"] is None:
             # Handle failure due to recursion limit reached
             execution["result"] = config\
-                ["execution"]["execution-failed-messages"]["recursion"]
+                ["carry_out_plan"]["execution-failed-messages"]["recursion"]
             execution["should_change_strategy"] = True
 
-        return { "execution": execution }
+        return { "execution": execution, "plan": plan }
 
