@@ -75,17 +75,18 @@ class Reflection(PolyaNode):
         
         return response["summary_of_work"]
     
-    def reflect_on_solution(self, state: State) -> Reflections:
+    def reflect_on_solution(self, state: State) -> State:
         should_keep_strategy = self._verify_solution(state) \
             and self._analyze_effectiveness(state)
         if should_keep_strategy:
             summary = self._summarize_work(state)
-            return { 
-                'summary_of_work' : summary, 
-                'solution' : state.execution['result'] 
-            }
+            return {
+                "reflections": { 
+                    'summary_of_work' : summary, 
+                    'solution' : state.execution['result'] 
+                }}
         
         if not self._select_next_course(state):
             # if we have no solution and no next strategy
             summary = self._summarize_work(state)
-            return { 'summary_of_work' : summary }
+            return { "reflection": { 'summary_of_work' : summary }}

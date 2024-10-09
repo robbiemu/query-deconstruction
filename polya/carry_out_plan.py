@@ -112,7 +112,7 @@ class CarryOutPlan(PolyaNode):
             state: State, 
             recursion_limit=math.inf, 
             adjustment_limit=math.inf
-    ) -> dict:
+    ) -> State:
         working_state = state.model_dump()
         working_state["execution"] = Execution()
         working_state["messages"] = state.messages.copy()
